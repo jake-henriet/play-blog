@@ -1,0 +1,35 @@
+@(userBlogForm: Form[controllers.UserBlogFormData])(implicit messages: Messages, request: RequestHeader)
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
+@main(title = "Register"){
+
+<nav class="blog-nav blog-masthead">
+    <div class="container-fluid">
+
+<ul class="nav navbar-nav">
+    <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+</ul>
+
+<ul class="nav navbar-nav navbar-right">
+    <li ><p class="navbar-text blog-nav-item">Welcome Guest</p></li>
+    <li ><a class="blog-nav-item active" href="@routes.MonoController.registerUser()">Register</a></li>
+    <li ><a class="blog-nav-item" href="@routes.MonoController.login()">Login</a></li>
+
+</ul>
+
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <p>Register a new User and Blog:</p>
+    @b3.form(routes.MonoController.registerUserPost()) {
+    @b3.text( userBlogForm("username"), '_label -> "Username" )
+    @b3.text( userBlogForm("aboutMe"), '_label -> "About Me" )
+    @b3.text( userBlogForm("blogTitle"), '_label -> "Blog Title" )
+    @b3.textarea( userBlogForm("blogDescription"), '_label -> "Blog Description" )
+    @b3.submit('class -> "btn btn-default"){ Register }
+    }
+
+
+
+    </div>
+}

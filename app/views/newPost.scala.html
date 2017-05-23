@@ -1,0 +1,47 @@
+@(newPostForm: Form[controllers.BlogPostFormData], blogId: Long)(implicit loggedInUser: Option[(String,String)], messages: Messages, request: RequestHeader)
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
+@main(title = "New Post"){
+
+<nav class="blog-nav blog-masthead">
+    <div class="container-fluid">
+
+        @loggedInUser match {
+        case None => {
+        <ul class="nav navbar-nav">
+            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.blog(blogId)">Current Blog</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ><p class="navbar-text blog-nav-item">Welcome Guest</p></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.registerUser()">Register</a></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.login()">Login</a></li>
+
+        </ul>
+        }
+        case Some((loggedInUserId,loggedInUserName)) => {
+        <ul class="nav navbar-nav">
+            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.blog(blogId)">My Blog</a></li>
+            <li><a class="blog-nav-item active" href="@routes.MonoController.newBlogPost(blogId)">New Blog Post</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUserName</p></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.logout()">Logout</a></li>
+        </ul>
+        }
+        } <!-- End logged in match -->
+
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <p>New Blog Post:</p>
+@b3.form(routes.MonoController.newBlogPostPost(blogId)) {
+    @b3.text( newPostForm("title"), '_label -> "Title" )
+    @b3.textarea( newPostForm("content"), '_label -> "Content" )
+    @b3.submit('class -> "btn btn-default"){ Add Post }
+}
+</div>
+}

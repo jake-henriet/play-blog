@@ -1,0 +1,26 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+# An example controller showing a sample home page
+GET     /                      controllers.MonoController.blogs
+GET     /blogs                      controllers.MonoController.blogs
+
+GET     /blogs/:blogId              controllers.MonoController.blog(blogId: Long)
+
+GET     /blogs/:blogId/posts/new              controllers.MonoController.newBlogPost(blogId: Long)
+POST     /blogs/:blogId/posts/new              controllers.MonoController.newBlogPostPost(blogId: Long)
+
+GET     /user/new               controllers.MonoController.registerUser
+POST     /user/new               controllers.MonoController.registerUserPost
+
+GET     /user/login               controllers.MonoController.login
+POST     /user/login               controllers.MonoController.loginPost
+GET     /user/logout               controllers.MonoController.logout
+
+GET     /async               controllers.AsyncController.message
+
+
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+

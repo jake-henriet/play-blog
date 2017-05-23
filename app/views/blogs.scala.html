@@ -1,0 +1,70 @@
+@(blogsUsers: Seq[(model.Blog,model.User)])(implicit loggedInUser: Option[(String,String)])
+@main(title = "Home"){
+
+<nav class="blog-nav blog-masthead">
+ <div class="container-fluid">
+
+         @loggedInUser match {
+         case None => {
+         <ul class="nav navbar-nav">
+             <li><a class="blog-nav-item active" href="@routes.MonoController.blogs()">Home</a></li>
+         </ul>
+
+         <ul class="nav navbar-nav navbar-right">
+             <li ><p class="navbar-text blog-nav-item">Welcome Guest</p></li>
+             <li ><a class="blog-nav-item" href="@routes.MonoController.registerUser()">Register</a></li>
+             <li ><a class="blog-nav-item" href="@routes.MonoController.login()">Login</a></li>
+
+         </ul>
+         }
+         case Some((loggedInUserId,loggedInUserName)) => {
+         <ul class="nav navbar-nav">
+             <li><a class="blog-nav-item active" href="@routes.MonoController.blogs()">Home</a></li>
+             @for((blog,user) <- blogsUsers) {
+                @if(loggedInUserId == user.id.toString){
+                <li ><a class="blog-nav-item" href="@routes.MonoController.blog(blog.id)">My Blog</a></li>
+                } else {
+                }
+             }
+         </ul>
+
+         <ul class="nav navbar-nav navbar-right">
+             <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUserName</p></li>
+             <li ><a class="blog-nav-item" href="@routes.MonoController.logout()">Logout</a></li>
+         </ul>
+         }
+         } <!-- End logged in match -->
+
+ </div>
+</nav>
+
+<div class="container-fluid">
+
+ <div class="row row-offcanvas row-offcanvas-right">
+
+  <div class="col-lg-12">
+   <div class="jumbotron">
+    <h1>Welcome</h1>
+    <p>This is Jake Henriet's simple blog cms for Inavero.  This page shows a list of users blogs.  A guest can register a new blog via 'Register' or login to
+    an existing blog via 'Login' on the menu.  The system uses only username as authentication for dev purposes.  A user can add a post to their blog via the menu while they are
+    viewing their blog as a logged in user.</p>
+   </div>
+   <div class="row">
+
+    @for((blog,user) <- blogsUsers){
+
+    <div class="col-lg-6">
+     <h2>@blog.title</h2>
+     <h4>By @user.username</h4>
+     <p>@blog.description</p>
+     <p><a class="btn btn-default" href="@routes.MonoController.blog(blog.id)" role="button">View Blog</a></p>
+    </div><!--/.col-xs-6.col-lg-4-->
+
+    }
+   </div><!--/row-->
+  </div><!--/.col-xs-12.col-sm-9-->
+ </div>
+</div><!--/.container-->
+
+
+}

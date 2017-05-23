@@ -1,0 +1,41 @@
+@(loginForm: Form[String])(implicit messages: Messages, request: RequestHeader)
+@implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
+@main(title = "Login"){
+<nav class="blog-nav blog-masthead">
+    <div class="container-fluid">
+
+
+        <ul class="nav navbar-nav">
+            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ><p class="navbar-text blog-nav-item">Welcome Guest</p></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.registerUser()">Register</a></li>
+            <li ><a class="blog-nav-item active" href="@routes.MonoController.login()">Login</a></li>
+
+        </ul>
+
+
+    </div>
+</nav>
+
+<div class="container-fluid">
+
+<p>Login:</p>
+
+    @b3.form(routes.MonoController.loginPost()) {
+    @b3.text( loginForm("username"), '_label -> "Username" )
+    @b3.submit('class -> "btn btn-default"){ Sign in }
+    }
+
+
+
+
+
+
+
+
+    </div>
+
+}

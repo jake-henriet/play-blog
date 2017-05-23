@@ -1,0 +1,83 @@
+@(blogEntries: Seq[model.BlogPost], blog: model.Blog, blogUser: model.User)(implicit loggedInUser: Option[(String,String)])
+@import java.text.SimpleDateFormat
+
+@main(title = "Blog"){
+
+<nav class="blog-nav blog-masthead">
+    <div class="container-fluid">
+
+        @loggedInUser match {
+        case None => {
+        <ul class="nav navbar-nav">
+            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li ><a class="blog-nav-item active" href="@routes.MonoController.blog(blog.id)">Current Blog</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ><p class="navbar-text blog-nav-item">Welcome Guest</p></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.registerUser()">Register</a></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.login()">Login</a></li>
+
+        </ul>
+        }
+        case Some((loggedInUserId,loggedInUserName)) => {
+        <ul class="nav navbar-nav">
+            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            @if(loggedInUserId == blogUser.id.toString){
+            <li ><a class="blog-nav-item active" href="@routes.MonoController.blog(blog.id)">My Blog</a></li>
+            <li><a class="blog-nav-item" href="@routes.MonoController.newBlogPost(blog.id)">New Blog Post</a></li>
+            } else {
+            <li ><a class="blog-nav-item active" href="@routes.MonoController.blog(blog.id)">Current Blog</a></li>
+            }
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUserName</p></li>
+            <li ><a class="blog-nav-item" href="@routes.MonoController.logout()">Logout</a></li>
+        </ul>
+        }
+        } <!-- End logged in match -->
+
+    </div>
+</nav>
+
+
+
+<div class="container">
+
+ <div class="blog-header">
+  <h1 class="blog-title">@blog.title</h1>
+  <p class="lead blog-description">@blog.description</p>
+ </div>
+
+ <div class="row">
+
+  <div class="col-sm-8 blog-main">
+
+      @for(blogEntry <- blogEntries){
+
+      <div class="blog-post">
+          <h2 class="blog-post-title">@blogEntry.title</h2>
+          <p class="blog-post-meta">@{new SimpleDateFormat("MM/dd/yyyy").format(blogEntry.created)}</p>
+
+          <p>@blogEntry.content</p>
+      </div><!-- /.blog-post -->
+
+
+      }
+
+  </div><!-- /.blog-main -->
+
+  <div class="col-sm-3 blog-sidebar">
+   <div class="sidebar-module sidebar-module-inset">
+    <h4>About @blogUser.username</h4>
+    <p>@blogUser.aboutMe</p>
+   </div>
+
+  </div><!-- /.blog-sidebar -->
+
+ </div><!-- /.row -->
+
+</div><!-- /.container -->
+
+}
