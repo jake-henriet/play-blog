@@ -1,4 +1,4 @@
-@(blogEntries: Seq[model.BlogPost], blog: model.Blog, blogUser: model.User)(implicit loggedInUser: Option[(String,String)])
+@(user: Option[model.User] = None, blogEntries: Seq[model.BlogPost], blog: model.Blog, blogUser: model.User)
 @import java.text.SimpleDateFormat
 
 @main(title = "Blog"){
@@ -6,10 +6,10 @@
 <nav class="blog-nav blog-masthead">
     <div class="container-fluid">
 
-        @loggedInUser match {
+        @user match {
         case None => {
         <ul class="nav navbar-nav">
-            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li><a class="blog-nav-item" href="@routes.MonoController.index()">Home</a></li>
             <li ><a class="blog-nav-item active" href="@routes.MonoController.blog(blog.id)">Current Blog</a></li>
         </ul>
 
@@ -20,10 +20,10 @@
 
         </ul>
         }
-        case Some((loggedInUserId,loggedInUserName)) => {
+        case Some(loggedInUser) => {
         <ul class="nav navbar-nav">
-            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
-            @if(loggedInUserId == blogUser.id.toString){
+            <li><a class="blog-nav-item" href="@routes.MonoController.index()">Home</a></li>
+            @if(loggedInUser.id == blogUser.id){
             <li ><a class="blog-nav-item active" href="@routes.MonoController.blog(blog.id)">My Blog</a></li>
             <li><a class="blog-nav-item" href="@routes.MonoController.newBlogPost(blog.id)">New Blog Post</a></li>
             } else {
@@ -32,7 +32,7 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUserName</p></li>
+            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUser.username</p></li>
             <li ><a class="blog-nav-item" href="@routes.MonoController.logout()">Logout</a></li>
         </ul>
         }

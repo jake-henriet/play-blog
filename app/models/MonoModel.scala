@@ -2,11 +2,9 @@ package model
 
 import java.sql.Timestamp
 
-
 import slick.jdbc.H2Profile.api._
 import slick.jdbc.JdbcProfile
 import play.api.db.slick.DatabaseConfigProvider
-
 import play.api.Play
 import play.api.data.Form
 import play.api.data.Forms._
@@ -15,13 +13,25 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.{Inject, Singleton}
 
+import com.mohiva.play.silhouette.api.services.IdentityService
+import com.mohiva.play.silhouette.api.{Env, Identity, LoginInfo}
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+
 /* Case classes to represent the tables in the database */
-case class User(id: Long, username: String, aboutMe: String, isAdmin: Boolean)
+//case class Profiles(id: Long, username: String, aboutMe: String, isAdmin: Boolean)
+case class User(id: Long, username: String, aboutMe: String, isAdmin: Boolean) extends Identity
 case class Blog(id: Long, userId: Long, title:String, description: String)
 case class BlogPost(id: Long, userId: Long, blogId: Long, title: String, content: String, created: Timestamp, edited: Timestamp)
 
+trait UserCookieEnv extends Env {
+  type I = User
+  type A = CookieAuthenticator
+}
+
+//val userCookieEnv = Environment[UserCookieEnv](...)
+
 @Singleton
-class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) {
+class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) extends IdentityService[User] {
 
   val dbConfig = dbConfigProvider.get[JdbcProfile]
 
@@ -34,7 +44,7 @@ class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) {
     def isAdmin = column[Boolean]("IS_ADMIN")
 
     override def * =
-      (id, userName, aboutMe, isAdmin) <>(User.tupled, User.unapply)
+      (id, userName, aboutMe, isAdmin) <> (User.tupled, User.unapply)
 
   }
 
@@ -67,7 +77,7 @@ class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) {
     def edited = column[Timestamp]("EDITED")
 
     override def * =
-      (id, userId, blogId, title, content, created,edited) <>(BlogPost.tupled, BlogPost.unapply)
+      (id, userId, blogId, title, content, created,edited) <> (BlogPost.tupled, BlogPost.unapply)
 
     def user = foreignKey("BP_USER_FK",userId, users)(_.id)
     def blog = foreignKey("BP_BLOG_FK",blogId, blogs)(_.id)
@@ -129,4 +139,8 @@ class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) {
     }
   }
 
+  def retrieve(loginInfo: LoginInfo): Future[Option[User]] = {
+    println("retrive called: " + loginInfo)
+    dbConfig.db.run(users.filter(_.userName === loginInfo.providerKey).result.headOption)
+  }
 }

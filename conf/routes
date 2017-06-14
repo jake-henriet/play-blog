@@ -4,8 +4,8 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                      controllers.MonoController.blogs
-GET     /blogs                      controllers.MonoController.blogs
+GET     /                      controllers.MonoController.index
+GET     /blogs                      controllers.MonoController.index
 
 GET     /blogs/:blogId              controllers.MonoController.blog(blogId: Long)
 

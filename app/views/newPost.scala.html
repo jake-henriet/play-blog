@@ -1,14 +1,14 @@
-@(newPostForm: Form[controllers.BlogPostFormData], blogId: Long)(implicit loggedInUser: Option[(String,String)], messages: Messages, request: RequestHeader)
+@(user: Option[model.User] = None, newPostForm: Form[controllers.BlogPostFormData], blogId: Long)(implicit messages: Messages, request: RequestHeader)
 @implicitFieldConstructor = @{ b3.horizontal.fieldConstructor("col-md-2", "col-md-10") }
 @main(title = "New Post"){
 
 <nav class="blog-nav blog-masthead">
     <div class="container-fluid">
 
-        @loggedInUser match {
+        @user match {
         case None => {
         <ul class="nav navbar-nav">
-            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li><a class="blog-nav-item" href="@routes.MonoController.index()">Home</a></li>
             <li ><a class="blog-nav-item" href="@routes.MonoController.blog(blogId)">Current Blog</a></li>
         </ul>
 
@@ -19,15 +19,15 @@
 
         </ul>
         }
-        case Some((loggedInUserId,loggedInUserName)) => {
+        case Some(loggedInUser) => {
         <ul class="nav navbar-nav">
-            <li><a class="blog-nav-item" href="@routes.MonoController.blogs()">Home</a></li>
+            <li><a class="blog-nav-item" href="@routes.MonoController.index()">Home</a></li>
             <li ><a class="blog-nav-item" href="@routes.MonoController.blog(blogId)">My Blog</a></li>
             <li><a class="blog-nav-item active" href="@routes.MonoController.newBlogPost(blogId)">New Blog Post</a></li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUserName</p></li>
+            <li ><p class="navbar-text blog-nav-item">Welcome @loggedInUser.username</p></li>
             <li ><a class="blog-nav-item" href="@routes.MonoController.logout()">Logout</a></li>
         </ul>
         }
