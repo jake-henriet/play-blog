@@ -28,8 +28,6 @@ trait UserCookieEnv extends Env {
   type A = CookieAuthenticator
 }
 
-//val userCookieEnv = Environment[UserCookieEnv](...)
-
 @Singleton
 class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) extends IdentityService[User] {
 
@@ -140,7 +138,7 @@ class ModelsService @Inject()(dbConfigProvider: DatabaseConfigProvider) extends 
   }
 
   def retrieve(loginInfo: LoginInfo): Future[Option[User]] = {
-    println("retrive called: " + loginInfo)
+    println("retrieve called: " + loginInfo)
     dbConfig.db.run(users.filter(_.userName === loginInfo.providerKey).result.headOption)
   }
 }

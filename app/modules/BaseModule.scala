@@ -31,10 +31,6 @@ class BaseModule extends AbstractModule with ScalaModule {
     */
   def configure(): Unit = {
     bind[Silhouette[UserCookieEnv]].to[SilhouetteProvider[UserCookieEnv]]
-    //bind[UnsecuredErrorHandler].to[CustomUnsecuredErrorHandler]
-    //bind[SecuredErrorHandler].to[CustomSecuredErrorHandler]
-    //bind[UserService].to[UserServiceImpl]
-    //bind[UserDAO].to[UserDAOImpl]
     bind[CacheLayer].to[PlayCacheLayer]
     bind[IDGenerator].toInstance(new SecureRandomIDGenerator())
     bind[PasswordHasher].toInstance(new BCryptPasswordHasher)
@@ -70,18 +66,6 @@ class BaseModule extends AbstractModule with ScalaModule {
     //Looks like we are making a  CookieAuthenticatorSettings object from the application.conf
     val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
 
-//    import scala.concurrent.duration._
-//    val config= CookieAuthenticatorSettings(
-//                                            cookieName = "authenticator",
-//                                            cookiePath = "/",
-//                                            cookieDomain = None,
-//                                            secureCookie = false,
-//                                            httpOnlyCookie = true,
-//                                            useFingerprinting = true,
-//                                            cookieMaxAge = None,
-//                                            authenticatorIdleTimeout = None,
-//                                            authenticatorExpiry = 12 hours)
-
     val encoder = new CrypterAuthenticatorEncoder(crypter)
 
     new CookieAuthenticatorService(config, None, cookieSigner, encoder, fingerprintGenerator, idGenerator, clock)
@@ -94,9 +78,6 @@ class BaseModule extends AbstractModule with ScalaModule {
     */
   @Provides @Named("authenticator-cookie-signer")
   def provideAuthenticatorCookieSigner(configuration: Configuration): CookieSigner = {
-    //val config = configuration.underlying.as[JcaCookieSignerSettings]("silhouette.authenticator.cookie.signer")
-
-    //case class JcaCookieSignerSettings(key: String, pepper: String = "-mohiva-silhouette-cookie-signer-")
 
     new JcaCookieSigner(JcaCookieSignerSettings(key = "asdfjkl234890",pepper = "-mohiva-silhouette-cookie-signer-"))
   }
@@ -109,30 +90,7 @@ class BaseModule extends AbstractModule with ScalaModule {
     */
   @Provides @Named("authenticator-crypter")
   def provideAuthenticatorCrypter(configuration: Configuration): Crypter = {
-    //val config = configuration.underlying.as[JcaCrypterSettings]("silhouette.authenticator.crypter")
-
     new JcaCrypter(JcaCrypterSettings(key="asdfjkl234890"))
   }
 
-
-//  @Provides
-//  def provideAuthenticatorService(
-//                                   fingerprintGenerator: FingerprintGenerator,
-//                                   idGenerator: IDGenerator,
-//                                   configuration: Configuration,
-//                                   clock: Clock): AuthenticatorService[CookieAuthenticator] = {
-//
-//    val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
-//    new CookieAuthenticatorService(config, None, fingerprintGenerator, idGenerator, clock)
-//  }
-
-/*
-  @Provides
-  def provideCredentialsProvider(
-                                  authInfoRepository: AuthInfoRepository,
-                                  passwordHasher: PasswordHasher): CredentialsProvider = {
-
-    new CredentialsProvider(authInfoRepository, passwordHasher, Seq(passwordHasher))
-  }
-  */
 }

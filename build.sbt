@@ -1,4 +1,4 @@
-name := """play-react"""
+name := """play-blog"""
 organization := "com.example"
 
 version := "1.0-SNAPSHOT"
